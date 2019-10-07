@@ -105,43 +105,46 @@ export function mockModel(
     properties = {},
   } = options;
 
-  return model.fields.reduce((previousValue, field) => {
-    let value;
+  return model.fields.reduce(
+    (previousValue, field) => {
+      let value;
 
-    const hasRange = field.minimum != null || field.maximum != null;
-    const hasDefault = field.default != null;
-    const hasExample = field.example != null;
-    const hasOverride = properties.hasOwnProperty(field.name);
+      const hasRange = field.minimum != null || field.maximum != null;
+      const hasDefault = field.default != null;
+      const hasExample = field.example != null;
+      const hasOverride = properties.hasOwnProperty(field.name);
 
-    if (onlyRequired && !field.isRequired && !hasOverride) {
-      return previousValue;
-    }
+      if (onlyRequired && !field.isRequired && !hasOverride) {
+        return previousValue;
+      }
 
-    if (hasOverride) {
-      value = properties[field.name];
-    } else if (hasExample && useExample) {
-      value = field.example;
-    } else if (!field.isRequired && hasDefault && useDefault) {
-      value = field.default;
-    } else if (isArrayType(field.type) && hasRange) {
-      value = mock(field.type, {
-        maximum: field.maximum,
-        minimum: field.minimum,
-      });
-    } else if (
-      isPrimitiveType(field.type)
-      && field.type.typeName === Kind.STRING
-      && hasRange) {
-      value = faker.random.alphaNumeric(faker.random.number({
-        min: field.minimum,
-        max: field.maximum,
-      }));
-    } else {
-      value = mock(field.type);
-    }
+      if (hasOverride) {
+        value = properties[field.name];
+      } else if (hasExample && useExample) {
+        value = field.example;
+      } else if (!field.isRequired && hasDefault && useDefault) {
+        value = field.default;
+      } else if (isArrayType(field.type) && hasRange) {
+        value = mock(field.type, {
+          maximum: field.maximum,
+          minimum: field.minimum,
+        });
+      } else if (
+        isPrimitiveType(field.type)
+        && field.type.typeName === Kind.STRING
+        && hasRange) {
+        value = faker.random.alphaNumeric(faker.random.number({
+          min: field.minimum,
+          max: field.maximum,
+        }));
+      } else {
+        value = mock(field.type);
+      }
 
-    return { ...previousValue, [field.name]: value };
-  }, {}); /* tslint:disable-line align */
+      return { ...previousValue, [field.name]: value };
+    },
+    {},
+  );
 }
 
 export interface UnionGeneratorOptions {
