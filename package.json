@@ -34,17 +34,17 @@
   },
   "homepage": "https://github.com/apicollective/apibuilder-mock-generator#readme",
   "dependencies": {
-    "apibuilder-js": "0.0.5",
+    "apibuilder-js": "0.0.8",
     "faker": "^4.1.0"
   },
   "devDependencies": {
-    "@types/faker": "^4.1.4",
-    "@types/jest": "^23.3.10",
-    "@types/node": "^10.12.12",
-    "jest": "^23.6.0",
-    "ts-jest": "^23.10.5",
-    "tslint": "^5.12.1",
-    "tslint-config-airbnb": "^5.11.1",
-    "typescript": "^3.2.2"
+    "@types/faker": "^4.1.6",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^10.14.20",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.6.3"
   }
 }
