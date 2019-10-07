@@ -70,7 +70,7 @@ export function mockArray(
     .filter(type => type != null);
 }
 
-export function mockMap(map: ApiBuilderMap): Record<string, any> {
+export function mockMap(map: ApiBuilderMap): any {
   return Array.from<Record<string, any>>({
     length: faker.random.number({ min: 1, max: 3 }),
   }).reduce(
@@ -82,7 +82,7 @@ export function mockMap(map: ApiBuilderMap): Record<string, any> {
   );
 }
 
-export function mockEnum(enumeration: ApiBuilderEnum): string | undefined {
+export function mockEnum(enumeration: ApiBuilderEnum): any {
   const value = faker.random.arrayElement(enumeration.values);
   return (value != null) ? value.name : undefined;
 }
@@ -97,7 +97,7 @@ export interface ModelGeneratorOptions {
 export function mockModel(
   model: ApiBuilderModel,
   options: ModelGeneratorOptions = {},
-): Record<string, any> {
+): any {
   const {
     onlyRequired = false,
     useDefault = false,
@@ -197,9 +197,9 @@ export function mockResponse(response: ApiBuilderResponse) {
 
 export function mock(type: ApiBuilderPrimitiveType): any;
 export function mock(type: ApiBuilderArray, options?: ArrayGeneratorOptions): any[];
-export function mock(type: ApiBuilderMap): Record<string, any>;
-export function mock(type: ApiBuilderModel, options?: ModelGeneratorOptions): object;
-export function mock(type: ApiBuilderEnum): string;
+export function mock(type: ApiBuilderMap): any;
+export function mock(type: ApiBuilderModel, options?: ModelGeneratorOptions): any;
+export function mock(type: ApiBuilderEnum): any;
 export function mock(type: ApiBuilderUnion): any;
 export function mock(type: ApiBuilderType): any;
 export function mock(type: any, options?: any): any {
