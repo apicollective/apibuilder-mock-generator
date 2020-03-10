@@ -528,4 +528,52 @@ describe('model generator', () => {
       name: 'Pluto',
     });
   });
+
+  test('adds discriminator to model present in union type', () => {
+    const schema = createApiBuilderServiceConfig({
+      models: [{
+        attributes: [],
+        name: 'bird',
+        plural: 'birds',
+        fields: [{
+          attributes: [],
+          name: 'name',
+          required: true,
+          type: 'string',
+        }],
+      }, {
+        attributes: [],
+        name: 'fish',
+        plural: 'fishes',
+        fields: [{
+          attributes: [],
+          name: 'name',
+          required: true,
+          type: 'string',
+        }],
+      }],
+      unions: [{
+        attributes: [],
+        name: 'pet',
+        plural: 'pets',
+        types: [{
+          attributes: [],
+          type: 'bird',
+        }, {
+          attributes: [],
+          type: 'fish',
+        }],
+      }],
+    });
+    const generator = createMockGenerator(schema);
+    const mock = generator.model('fish', {
+      properties: {
+        name: 'nemo',
+      },
+    });
+    expect(mock).toEqual({
+      discriminator: 'fish',
+      name: 'nemo',
+    });
+  });
 });
