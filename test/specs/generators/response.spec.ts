@@ -28,7 +28,7 @@ describe('response generator', () => {
         attributes: [],
         operations: [{
           path: '/pets/:id',
-          method: ApiBuilderMethod.GET,
+          method: 'GET',
           responses: [{
             code: {
               integer: {
