@@ -566,14 +566,27 @@ describe('model generator', () => {
       }],
     });
     const generator = createMockGenerator(schema);
-    const mock = generator.model('fish', {
+
+    const fish = generator.model('fish', {
       properties: {
-        name: 'nemo',
+        name: 'Nemo',
       },
     });
-    expect(mock).toEqual({
+
+    const bird = generator.model('bird', {
+      properties: {
+        name: 'Tweety',
+      },
+    });
+
+    expect(fish).toEqual({
       discriminator: 'fish',
-      name: 'nemo',
+      name: 'Nemo',
+    });
+
+    expect(bird).toEqual({
+      discriminator: 'bird',
+      name: 'Tweety',
     });
   });
 });
