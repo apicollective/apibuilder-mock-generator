@@ -19,7 +19,7 @@ import {
 
 export interface ResponseGeneratorParameters {
   readonly path: string;
-  readonly operation: keyof typeof ApiBuilderMethod;
+  readonly operation: ApiBuilderMethod;
   readonly response: number;
 }
 

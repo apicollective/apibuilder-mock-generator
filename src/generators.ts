@@ -104,6 +104,11 @@ export function mockModel(
     useExample = false,
     properties = {},
   } = options;
+  const initial: { [key: string]: any } = {};
+
+  if (model.discriminator != null && model.discriminatorValue != null) {
+    initial[model.discriminator] = model.discriminatorValue;
+  }
 
   return model.fields.reduce(
     (previousValue, field) => {
@@ -143,7 +148,7 @@ export function mockModel(
 
       return { ...previousValue, [field.name]: value };
     },
-    {},
+    initial,
   );
 }
 

@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/apicollective/apibuilder-mock-generator#readme",
   "dependencies": {
-    "apibuilder-js": "0.0.8",
+    "apibuilder-js": "0.0.13",
     "faker": "^4.1.0"
   },
   "devDependencies": {
