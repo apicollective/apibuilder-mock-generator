@@ -1,3 +1,4 @@
+import { ApiBuilderMethod } from 'apibuilder-js';
 import { createApiBuilderServiceConfig } from '../../helpers/apibuilder';
 import { createMockGenerator } from '../../../src/index';
 
