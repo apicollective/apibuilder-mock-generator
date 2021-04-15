@@ -1,21 +1,8 @@
-import {
-  ApiBuilderMethod,
-  ApiBuilderService,
-  ApiBuilderServiceConfig,
-  isEnumType,
-  isModelType,
-  isUnionType,
-  ApiBuilderOperation,
-} from 'apibuilder-js';
-
-import {
-  mockEnum,
-  mockModel,
-  mockUnion,
-  mockResponse,
-  ModelGeneratorOptions,
-  UnionGeneratorOptions,
-} from './generators';
+import { ApiBuilderService, isEnumType, isModelType, isUnionType } from 'apibuilder-js';
+import type { ApiBuilderMethod, ApiBuilderServiceConfig, ApiBuilderOperation } from 'apibuilder-js';
+import { mockType } from './generators';
+import { createContext } from './context';
+import type { ModelGeneratorOptions, UnionGeneratorOptions } from './generators';
 
 export interface ResponseGeneratorParameters {
   readonly path: string;
@@ -32,35 +19,39 @@ export class Generator {
 
   public enum(name: string) {
     const type = this.service.findTypeByName(name);
+    const context = createContext();
 
     if (!isEnumType(type)) {
       throw new Error(`'${name}' did not match an enum in '${this.service}' service`);
     }
 
-    return mockEnum(type);
+    return mockType(type, context);
   }
 
   public model(name: string, options?: ModelGeneratorOptions) {
     const type = this.service.findTypeByName(name);
+    const context = createContext();
 
     if (!isModelType(type)) {
       throw new Error(`'${name}' did not match a model in '${this.service}' service`);
     }
 
-    return mockModel(type, options);
+    return mockType(type, context, options);
   }
 
   public union(name: string, options?: UnionGeneratorOptions) {
     const type = this.service.findTypeByName(name);
+    const context = createContext();
 
     if (!isUnionType(type)) {
       throw new Error(`'${name}' did not match an union in '${this.service}' service`);
     }
 
-    return mockUnion(type, options);
+    return mockType(type, context, options);
   }
 
   public response(params: ResponseGeneratorParameters) {
+    const context = createContext();
     const operation = this.service.resources
       .reduce(
         (operations: ApiBuilderOperation[], resource) => operations.concat(resource.operations),
@@ -87,7 +78,7 @@ export class Generator {
       );
     }
 
-    return mockResponse(response);
+    return mockType(response.type, context);
   }
 }
 
