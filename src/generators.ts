@@ -23,17 +23,17 @@ export function mockPrimitive(type: ApiBuilderPrimitiveType): any {
     case Kind.STRING:
       return faker.random.word();
     case Kind.BOOLEAN:
-      return faker.random.boolean();
+      return faker.datatype.boolean();
     case Kind.DATE_ISO8601:
       return faker.date.future().toISOString().slice(0, 10);
     case Kind.DATE_TIME_ISO8601:
       return faker.date.future().toISOString();
     case Kind.DECIMAL:
     case Kind.DOUBLE:
-      return faker.random.number({ precision: 0.01 });
+      return faker.datatype.number({ precision: 0.01 });
     case Kind.INTEGER:
     case Kind.LONG:
-      return faker.random.number({ precision: 1 });
+      return faker.datatype.number({ precision: 1 });
     case Kind.JSON:
       return JSON.stringify({});
     case Kind.OBJECT:
@@ -41,7 +41,7 @@ export function mockPrimitive(type: ApiBuilderPrimitiveType): any {
     case Kind.UNIT:
       return undefined;
     case Kind.UUID:
-      return faker.random.uuid();
+      return faker.datatype.uuid();
     default:
       return undefined;
   }
@@ -61,7 +61,7 @@ export function mockArray(
     maximum = 3,
   } = options;
 
-  const length = faker.random.number({
+  const length = faker.datatype.number({
     min: minimum,
     max: Math.max(minimum, maximum),
   });
@@ -72,7 +72,7 @@ export function mockArray(
 
 export function mockMap(map: ApiBuilderMap): any {
   return Array.from<Record<string, any>>({
-    length: faker.random.number({ min: 1, max: 3 }),
+    length: faker.datatype.number({ min: 1, max: 3 }),
   }).reduce(
     previousValue => ({
       ...previousValue,
@@ -138,7 +138,7 @@ export function mockModel(
         isPrimitiveType(field.type)
         && field.type.typeName === Kind.STRING
         && hasRange) {
-        value = faker.random.alphaNumeric(faker.random.number({
+        value = faker.random.alphaNumeric(faker.datatype.number({
           min: field.minimum,
           max: field.maximum,
         }));
