@@ -589,4 +589,109 @@ describe('model generator', () => {
       name: 'Tweety',
     });
   });
+
+  test('omits optional field with circular references', () => {
+    const schema = createApiBuilderServiceConfig({
+      models: [{
+        name: 'pet',
+        plural: 'pets',
+        attributes: [],
+        fields: [{
+          name: 'name',
+          type: 'string',
+          attributes: [],
+          required: true,
+        }, {
+          name: 'parent',
+          type: 'pet',
+          attributes: [],
+          required: false,
+        }],
+      }],
+    });
+    const generator = createMockGenerator(schema);
+    const fish = generator.model('pet');
+    expect(fish).toEqual({
+      name: expect.any(String),
+    });
+  });
+});
+
+test('omits deep optional field with circular references', () => {
+  const schema = createApiBuilderServiceConfig({
+    models: [{
+      name: 'bar',
+      plural: 'bars',
+      attributes: [],
+      fields: [{
+        name: 'baz',
+        attributes: [],
+        required: true,
+        type: 'baz',
+      }],
+    }, {
+      name: 'baz',
+      plural: 'bazes',
+      attributes: [],
+      fields: [{
+        name: 'foo',
+        attributes: [],
+        required: true,
+        type: 'foo',
+      }],
+    }, {
+      name: 'foo',
+      plural: 'foos',
+      attributes: [],
+      fields: [{
+        name: 'qux',
+        attributes: [],
+        required: true,
+        type: 'qux',
+      }],
+    }, {
+      name: 'qux',
+      plural: 'quxes',
+      attributes: [],
+      fields: [{
+        name: 'bar',
+        attributes: [],
+        required: false,
+        type: 'bar',
+      }],
+    }],
+  });
+  const generator = createMockGenerator(schema);
+  const bar = generator.model('bar');
+  expect(bar).toEqual({
+    baz: {
+      foo: {
+        qux: {},
+      },
+    },
+  });
+});
+
+test('throws when required field has a circular reference', () => {
+  const schema = createApiBuilderServiceConfig({
+    models: [{
+      name: 'pet',
+      plural: 'pets',
+      attributes: [],
+      fields: [{
+        name: 'name',
+        type: 'string',
+        attributes: [],
+        required: true,
+      }, {
+        name: 'parent',
+        type: 'pet',
+        attributes: [],
+        required: true,
+      }],
+    }],
+  });
+  const generator = createMockGenerator(schema);
+  const subject = () => generator.model('pet');
+  expect(subject).toThrow();
 });

@@ -13,27 +13,32 @@ import {
   isModelType,
   isPrimitiveType,
   isUnionType,
-  ApiBuilderResponse,
 } from 'apibuilder-js';
 
 import faker from 'faker';
 
-export function mockPrimitive(type: ApiBuilderPrimitiveType): any {
+import {
+  GeneratorContext,
+} from './context';
+
+export function mockPrimitive(
+  type: ApiBuilderPrimitiveType,
+): any {
   switch (type.fullName) {
     case Kind.STRING:
       return faker.random.word();
     case Kind.BOOLEAN:
-      return faker.random.boolean();
+      return faker.datatype.boolean();
     case Kind.DATE_ISO8601:
       return faker.date.future().toISOString().slice(0, 10);
     case Kind.DATE_TIME_ISO8601:
       return faker.date.future().toISOString();
     case Kind.DECIMAL:
     case Kind.DOUBLE:
-      return faker.random.number({ precision: 0.01 });
+      return faker.datatype.number({ precision: 0.01 });
     case Kind.INTEGER:
     case Kind.LONG:
-      return faker.random.number({ precision: 1 });
+      return faker.datatype.number({ precision: 1 });
     case Kind.JSON:
       return JSON.stringify({});
     case Kind.OBJECT:
@@ -41,7 +46,7 @@ export function mockPrimitive(type: ApiBuilderPrimitiveType): any {
     case Kind.UNIT:
       return undefined;
     case Kind.UUID:
-      return faker.random.uuid();
+      return faker.datatype.uuid();
     default:
       return undefined;
   }
@@ -54,6 +59,7 @@ export interface ArrayGeneratorOptions {
 
 export function mockArray(
   array: ApiBuilderArray,
+  context: GeneratorContext,
   options: ArrayGeneratorOptions = {},
 ): any[] {
   const {
@@ -61,28 +67,33 @@ export function mockArray(
     maximum = 3,
   } = options;
 
-  const length = faker.random.number({
+  const length = faker.datatype.number({
     min: minimum,
     max: Math.max(minimum, maximum),
   });
 
-  return Array.from({ length }, () => mock(array.ofType))
+  return Array.from({ length }, () => mockType(array.ofType, context))
     .filter(type => type != null);
 }
 
-export function mockMap(map: ApiBuilderMap): any {
+export function mockMap(
+  map: ApiBuilderMap,
+  context: GeneratorContext,
+): any {
   return Array.from<Record<string, any>>({
-    length: faker.random.number({ min: 1, max: 3 }),
+    length: faker.datatype.number({ min: 1, max: 3 }),
   }).reduce(
     previousValue => ({
       ...previousValue,
-      [faker.hacker.noun()]: mock(map.ofType),
+      [faker.hacker.noun()]: mockType(map.ofType, context),
     }),
     {},
   );
 }
 
-export function mockEnum(enumeration: ApiBuilderEnum): any {
+export function mockEnum(
+  enumeration: ApiBuilderEnum,
+): any {
   const value = faker.random.arrayElement(enumeration.values);
   return (value != null) ? value.name : undefined;
 }
@@ -96,6 +107,7 @@ export interface ModelGeneratorOptions {
 
 export function mockModel(
   model: ApiBuilderModel,
+  context: GeneratorContext,
   options: ModelGeneratorOptions = {},
 ): any {
   const {
@@ -104,6 +116,7 @@ export function mockModel(
     useExample = false,
     properties = {},
   } = options;
+
   const initial: { [key: string]: any } = {};
 
   if (model.discriminator != null && model.discriminatorValue != null) {
@@ -114,12 +127,17 @@ export function mockModel(
     (previousValue, field) => {
       let value;
 
+      const hasCircularReference = context.ancestors.includes(field.type.toString());
       const hasRange = field.minimum != null || field.maximum != null;
       const hasDefault = field.default != null;
       const hasExample = field.example != null;
       const hasOverride = properties.hasOwnProperty(field.name);
 
       if (onlyRequired && !field.isRequired && !hasOverride) {
+        return previousValue;
+      }
+
+      if (hasCircularReference && !field.isRequired) {
         return previousValue;
       }
 
@@ -130,7 +148,7 @@ export function mockModel(
       } else if (!field.isRequired && hasDefault && useDefault) {
         value = field.default;
       } else if (isArrayType(field.type) && hasRange) {
-        value = mock(field.type, {
+        value = mockType(field.type, context, {
           maximum: field.maximum,
           minimum: field.minimum,
         });
@@ -138,15 +156,18 @@ export function mockModel(
         isPrimitiveType(field.type)
         && field.type.typeName === Kind.STRING
         && hasRange) {
-        value = faker.random.alphaNumeric(faker.random.number({
+        value = faker.random.alphaNumeric(faker.datatype.number({
           min: field.minimum,
           max: field.maximum,
         }));
       } else {
-        value = mock(field.type);
+        value = mockType(field.type, context);
       }
 
-      return { ...previousValue, [field.name]: value };
+      return {
+        ...previousValue,
+        [field.name]: value,
+      };
     },
     initial,
   );
@@ -159,6 +180,7 @@ export interface UnionGeneratorOptions {
 
 export function mockUnion(
   union: ApiBuilderUnion,
+  context: GeneratorContext,
   options: UnionGeneratorOptions = {},
 ): any {
   const {
@@ -180,14 +202,16 @@ export function mockUnion(
   if (isPrimitiveType(unionType.type) || isEnumType(unionType.type)) {
     return {
       [discriminatorKey]: discriminatorValue,
-      value: properties.hasOwnProperty('value') ? properties.value : mock(unionType.type),
+      value: properties.hasOwnProperty('value')
+        ? properties.value
+        : mockType(unionType.type, context),
     };
   }
 
   if (isModelType(unionType.type)) {
     return {
       [discriminatorKey]: discriminatorValue,
-      ...mockModel(unionType.type, {
+      ...mockModel(unionType.type, context, {
         properties,
       }),
     };
@@ -195,37 +219,59 @@ export function mockUnion(
 
   return {
     [discriminatorKey]: discriminatorValue,
-    ...mock(unionType.type),
+    ...mockType(unionType.type, context),
   };
 }
 
-export function mockResponse(response: ApiBuilderResponse) {
-  return mock(response.type);
-}
+export function mockType(
+  type: ApiBuilderPrimitiveType,
+  context: GeneratorContext,
+): any;
 
-export function mock(type: ApiBuilderPrimitiveType): any;
-export function mock(type: ApiBuilderArray, options?: ArrayGeneratorOptions): any[];
-export function mock(type: ApiBuilderMap): any;
-export function mock(type: ApiBuilderModel, options?: ModelGeneratorOptions): any;
-export function mock(type: ApiBuilderEnum): any;
-export function mock(type: ApiBuilderUnion): any;
-export function mock(type: ApiBuilderType): any;
-export function mock(type: any, options?: any): any {
-  let mock;
+export function mockType(
+  type: ApiBuilderArray,
+  context: GeneratorContext,
+  options?: ArrayGeneratorOptions,
+): any[];
 
-  if (isArrayType(type)) {
-    mock = mockArray(type, options);
-  } else if (isMapType(type)) {
-    mock = mockMap(type);
-  } else if (isUnionType(type)) {
-    mock = mockUnion(type);
-  } else if (isModelType(type)) {
-    mock = mockModel(type, options);
-  } else if (isEnumType(type)) {
-    mock = mockEnum(type);
-  } else if (isPrimitiveType(type)) {
-    mock = mockPrimitive(type);
-  }
+export function mockType(
+  type: ApiBuilderMap,
+  context: GeneratorContext,
+): any;
 
-  return mock;
+export function mockType(
+  type: ApiBuilderModel,
+  context: GeneratorContext,
+  options?: ModelGeneratorOptions,
+): any;
+
+export function mockType(
+  type: ApiBuilderEnum,
+  context: GeneratorContext,
+): any;
+
+export function mockType(
+  type: ApiBuilderUnion,
+  context: GeneratorContext,
+  options?: UnionGeneratorOptions,
+): any;
+
+export function mockType(
+  type: ApiBuilderType,
+  context: GeneratorContext,
+): any;
+
+export function mockType(
+  type: ApiBuilderType,
+  context: GeneratorContext,
+  options?: any,
+): any {
+  context.ancestors.push(type.toString());
+  if (isArrayType(type)) return mockArray(type, context, options);
+  if (isMapType(type)) return mockMap(type, context);
+  if (isUnionType(type)) return mockUnion(type, context, options);
+  if (isModelType(type)) return mockModel(type, context, options);
+  if (isEnumType(type)) return mockEnum(type);
+  if (isPrimitiveType(type)) return mockPrimitive(type);
+  throw new TypeError('Invalid type provided to generator');
 }
