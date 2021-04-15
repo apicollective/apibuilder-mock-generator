@@ -606,8 +606,8 @@ describe('model generator', () => {
           type: 'pet',
           attributes: [],
           required: false,
-        }]
-      }]
+        }],
+      }],
     });
     const generator = createMockGenerator(schema);
     const fish = generator.model('pet');
@@ -628,7 +628,7 @@ test('omits deep optional field with circular references', () => {
         attributes: [],
         required: true,
         type: 'baz',
-      }]
+      }],
     }, {
       name: 'baz',
       plural: 'bazes',
@@ -648,7 +648,7 @@ test('omits deep optional field with circular references', () => {
         attributes: [],
         required: true,
         type: 'qux',
-      }]
+      }],
     }, {
       name: 'qux',
       plural: 'quxes',
@@ -658,8 +658,8 @@ test('omits deep optional field with circular references', () => {
         attributes: [],
         required: false,
         type: 'bar',
-      }]
-    }]
+      }],
+    }],
   });
   const generator = createMockGenerator(schema);
   const bar = generator.model('bar');
@@ -688,10 +688,10 @@ test('throws when required field has a circular reference', () => {
         type: 'pet',
         attributes: [],
         required: true,
-      }]
-    }]
+      }],
+    }],
   });
   const generator = createMockGenerator(schema);
   const subject = () => generator.model('pet');
   expect(subject).toThrow();
-})
+});

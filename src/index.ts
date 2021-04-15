@@ -1,8 +1,20 @@
-import { ApiBuilderService, isEnumType, isModelType, isUnionType } from 'apibuilder-js';
-import type { ApiBuilderMethod, ApiBuilderServiceConfig, ApiBuilderOperation } from 'apibuilder-js';
-import { mockType } from './generators';
+import {
+  ApiBuilderService,
+  ApiBuilderMethod,
+  ApiBuilderServiceConfig,
+  ApiBuilderOperation,
+  isEnumType,
+  isModelType,
+  isUnionType,
+} from 'apibuilder-js';
+
+import {
+  mockType,
+  ModelGeneratorOptions,
+  UnionGeneratorOptions,
+} from './generators';
+
 import { createContext } from './context';
-import type { ModelGeneratorOptions, UnionGeneratorOptions } from './generators';
 
 export interface ResponseGeneratorParameters {
   readonly path: string;

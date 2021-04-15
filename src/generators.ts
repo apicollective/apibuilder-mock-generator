@@ -1,4 +1,11 @@
 import {
+  ApiBuilderArray,
+  ApiBuilderEnum,
+  ApiBuilderMap,
+  ApiBuilderModel,
+  ApiBuilderPrimitiveType,
+  ApiBuilderType,
+  ApiBuilderUnion,
   Kind,
   isArrayType,
   isEnumType,
@@ -10,17 +17,7 @@ import {
 
 import faker from 'faker';
 
-import type {
-  ApiBuilderArray,
-  ApiBuilderEnum,
-  ApiBuilderMap,
-  ApiBuilderModel,
-  ApiBuilderPrimitiveType,
-  ApiBuilderType,
-  ApiBuilderUnion,
-} from 'apibuilder-js';
-
-import type {
+import {
   GeneratorContext,
 } from './context';
 
@@ -169,7 +166,7 @@ export function mockModel(
 
       return {
         ...previousValue,
-        [field.name]: value
+        [field.name]: value,
       };
     },
     initial,
@@ -226,13 +223,44 @@ export function mockUnion(
   };
 }
 
-export function mockType(type: ApiBuilderPrimitiveType, context: GeneratorContext): any;
-export function mockType(type: ApiBuilderArray, context: GeneratorContext, options?: ArrayGeneratorOptions): any[];
-export function mockType(type: ApiBuilderMap, context: GeneratorContext): any;
-export function mockType(type: ApiBuilderModel, context: GeneratorContext, options?: ModelGeneratorOptions): any;
-export function mockType(type: ApiBuilderEnum, context: GeneratorContext): any;
-export function mockType(type: ApiBuilderUnion, context: GeneratorContext, options?: UnionGeneratorOptions): any;
-export function mockType(type: ApiBuilderType, context: GeneratorContext): any;
+export function mockType(
+  type: ApiBuilderPrimitiveType,
+  context: GeneratorContext,
+): any;
+
+export function mockType(
+  type: ApiBuilderArray,
+  context: GeneratorContext,
+  options?: ArrayGeneratorOptions,
+): any[];
+
+export function mockType(
+  type: ApiBuilderMap,
+  context: GeneratorContext,
+): any;
+
+export function mockType(
+  type: ApiBuilderModel,
+  context: GeneratorContext,
+  options?: ModelGeneratorOptions,
+): any;
+
+export function mockType(
+  type: ApiBuilderEnum,
+  context: GeneratorContext,
+): any;
+
+export function mockType(
+  type: ApiBuilderUnion,
+  context: GeneratorContext,
+  options?: UnionGeneratorOptions,
+): any;
+
+export function mockType(
+  type: ApiBuilderType,
+  context: GeneratorContext,
+): any;
+
 export function mockType(
   type: ApiBuilderType,
   context: GeneratorContext,
@@ -247,4 +275,3 @@ export function mockType(
   if (isPrimitiveType(type)) return mockPrimitive(type);
   throw new TypeError('Invalid type provided to generator');
 }
-
