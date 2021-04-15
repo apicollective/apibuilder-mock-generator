@@ -1,20 +1,21 @@
 import {
-  ApiBuilderService,
   ApiBuilderMethod,
+  ApiBuilderService,
   ApiBuilderServiceConfig,
-  ApiBuilderOperation,
   isEnumType,
   isModelType,
   isUnionType,
+  ApiBuilderOperation,
 } from 'apibuilder-js';
 
 import {
-  mockType,
+  mockEnum,
+  mockModel,
+  mockUnion,
+  mockResponse,
   ModelGeneratorOptions,
   UnionGeneratorOptions,
 } from './generators';
-
-import { createContext } from './context';
 
 export interface ResponseGeneratorParameters {
   readonly path: string;
@@ -31,39 +32,35 @@ export class Generator {
 
   public enum(name: string) {
     const type = this.service.findTypeByName(name);
-    const context = createContext();
 
     if (!isEnumType(type)) {
       throw new Error(`'${name}' did not match an enum in '${this.service}' service`);
     }
 
-    return mockType(type, context);
+    return mockEnum(type);
   }
 
   public model(name: string, options?: ModelGeneratorOptions) {
     const type = this.service.findTypeByName(name);
-    const context = createContext();
 
     if (!isModelType(type)) {
       throw new Error(`'${name}' did not match a model in '${this.service}' service`);
     }
 
-    return mockType(type, context, options);
+    return mockModel(type, options);
   }
 
   public union(name: string, options?: UnionGeneratorOptions) {
     const type = this.service.findTypeByName(name);
-    const context = createContext();
 
     if (!isUnionType(type)) {
       throw new Error(`'${name}' did not match an union in '${this.service}' service`);
     }
 
-    return mockType(type, context, options);
+    return mockUnion(type, options);
   }
 
   public response(params: ResponseGeneratorParameters) {
-    const context = createContext();
     const operation = this.service.resources
       .reduce(
         (operations: ApiBuilderOperation[], resource) => operations.concat(resource.operations),
@@ -90,7 +87,7 @@ export class Generator {
       );
     }
 
-    return mockType(response.type, context);
+    return mockResponse(response);
   }
 }
 

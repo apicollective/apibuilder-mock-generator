@@ -35,10 +35,10 @@
   "homepage": "https://github.com/apicollective/apibuilder-mock-generator#readme",
   "dependencies": {
     "apibuilder-js": "0.0.13",
-    "faker": "^5.5.3"
+    "faker": "^4.1.0"
   },
   "devDependencies": {
-    "@types/faker": "^5.5.1",
+    "@types/faker": "^4.1.6",
     "@types/jest": "^24.0.18",
     "@types/node": "^10.14.20",
     "jest": "^24.9.0",

@@ -4,18 +4,16 @@ import {
   ApiBuilderService,
   FullyQualifiedName,
 } from 'apibuilder-js';
-import { createContext } from '../../../src/context';
 
 import { mockMap } from '../../../src/generators';
 import { createApiBuilderServiceConfig } from '../../helpers/apibuilder';
 
 describe('map generator', () => {
   test('can mock map of string', () => {
-    const context = createContext();
     const fqn = new FullyQualifiedName('string');
     const primitive = new ApiBuilderPrimitiveType(fqn);
     const map = new ApiBuilderMap(primitive);
-    const mock = mockMap(map, context);
+    const mock = mockMap(map);
     expect(mock).toEqual(expect.any(Object));
     Object.keys(mock).forEach((key) => {
       const value = (mock as any)[key];
@@ -40,9 +38,8 @@ describe('map generator', () => {
     });
     const service = new ApiBuilderService(schema);
     service.enums.forEach((enumeration) => {
-      const context = createContext();
       const map = new ApiBuilderMap(enumeration);
-      const mock = mockMap(map, context);
+      const mock = mockMap(map);
       expect(mock).toEqual(expect.any(Object));
       Object.keys(mock).forEach((key) => {
         const value = (mock as any)[key];
