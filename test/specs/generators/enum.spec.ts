@@ -18,6 +18,6 @@ describe('enum generator', () => {
       }],
     }));
     const mock = generator.enum('breed');
-    expect(values.map(value => value.name)).toContain(mock);
+    expect(values.map((value) => value.name)).toContain(mock);
   });
 });

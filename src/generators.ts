@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import {
   ApiBuilderArray,
   ApiBuilderEnum,
@@ -67,14 +68,14 @@ export function mockArray(
   });
 
   return Array.from({ length }, () => mock(array.ofType))
-    .filter(type => type != null);
+    .filter((type) => type != null);
 }
 
 export function mockMap(map: ApiBuilderMap): any {
   return Array.from<Record<string, any>>({
     length: faker.random.number({ min: 1, max: 3 }),
   }).reduce(
-    previousValue => ({
+    (previousValue) => ({
       ...previousValue,
       [faker.hacker.noun()]: mock(map.ofType),
     }),
@@ -117,7 +118,7 @@ export function mockModel(
       const hasRange = field.minimum != null || field.maximum != null;
       const hasDefault = field.default != null;
       const hasExample = field.example != null;
-      const hasOverride = properties.hasOwnProperty(field.name);
+      const hasOverride = Object.prototype.hasOwnProperty.call(properties, field.name);
 
       if (onlyRequired && !field.isRequired && !hasOverride) {
         return previousValue;
@@ -167,7 +168,7 @@ export function mockUnion(
   } = options;
 
   const unionType = (type != null)
-    ? union.types.find(unionType => unionType.typeName === type)
+    ? union.types.find((ut) => ut.typeName === type)
     : faker.random.arrayElement(union.types);
 
   if (unionType == null) {
@@ -175,12 +176,12 @@ export function mockUnion(
   }
 
   const discriminatorKey = union.discriminator;
-  const discriminatorValue = unionType.discriminatorValue;
+  const { discriminatorValue } = unionType;
 
   if (isPrimitiveType(unionType.type) || isEnumType(unionType.type)) {
     return {
       [discriminatorKey]: discriminatorValue,
-      value: properties.hasOwnProperty('value') ? properties.value : mock(unionType.type),
+      value: Object.prototype.hasOwnProperty.call(properties, 'value') ? properties.value : mock(unionType.type),
     };
   }
 
@@ -211,21 +212,21 @@ export function mock(type: ApiBuilderEnum): any;
 export function mock(type: ApiBuilderUnion): any;
 export function mock(type: ApiBuilderType): any;
 export function mock(type: any, options?: any): any {
-  let mock;
+  let mck;
 
   if (isArrayType(type)) {
-    mock = mockArray(type, options);
+    mck = mockArray(type, options);
   } else if (isMapType(type)) {
-    mock = mockMap(type);
+    mck = mockMap(type);
   } else if (isUnionType(type)) {
-    mock = mockUnion(type);
+    mck = mockUnion(type);
   } else if (isModelType(type)) {
-    mock = mockModel(type, options);
+    mck = mockModel(type, options);
   } else if (isEnumType(type)) {
-    mock = mockEnum(type);
+    mck = mockEnum(type);
   } else if (isPrimitiveType(type)) {
-    mock = mockPrimitive(type);
+    mck = mockPrimitive(type);
   }
 
-  return mock;
+  return mck;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { ApiBuilderServiceConfig } from 'apibuilder-js';
 
 const defaultServiceConfig: ApiBuilderServiceConfig = {
@@ -28,5 +29,5 @@ const defaultServiceConfig: ApiBuilderServiceConfig = {
 export function createApiBuilderServiceConfig(
   config: Partial<ApiBuilderServiceConfig>,
 ): ApiBuilderServiceConfig {
-  return Object.assign({}, defaultServiceConfig, config);
+  return { ...defaultServiceConfig, ...config };
 }

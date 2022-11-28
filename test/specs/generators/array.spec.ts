@@ -40,9 +40,7 @@ describe('array generator', () => {
       const mock = mockArray(array);
       expect(mock).toEqual(expect.any(Array));
       mock.forEach((value) => {
-        expect(enumeration.values.some((enumValue) => {
-          return enumValue.name === value;
-        })).toBe(true);
+        expect(enumeration.values.some((enumValue) => enumValue.name === value)).toBe(true);
       });
     });
   });

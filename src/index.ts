@@ -66,10 +66,8 @@ export class Generator {
         (operations: ApiBuilderOperation[], resource) => operations.concat(resource.operations),
         [],
       )
-      .find((operation: ApiBuilderOperation) => {
-        return operation.path === params.path
-          && operation.method === params.operation;
-      });
+      .find((op: ApiBuilderOperation) => op.path === params.path
+          && op.method === params.operation);
 
     if (operation == null) {
       throw new Error(

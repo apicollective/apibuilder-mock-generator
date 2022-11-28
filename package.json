@@ -8,9 +8,8 @@
     "build": "tsc",
     "clean": "rm -rf dist",
     "coverage": "jest --coverage",
-    "lint": "npm run lint:src && npm run lint:test",
-    "lint:src": "tslint -c ./tslint.json -p ./tsconfig.json './src/**/*.ts'",
-    "lint:test": "tslint -c ./tslint.json -p ./tsconfig.json './test/**/*.ts'",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
     "prepare": "npm run clean && npm run build",
     "test": "jest"
   },
@@ -35,16 +34,20 @@
   "homepage": "https://github.com/apicollective/apibuilder-mock-generator#readme",
   "dependencies": {
     "apibuilder-js": "0.0.13",
-    "faker": "^4.1.0"
+    "faker": "^5.5.3"
   },
   "devDependencies": {
-    "@types/faker": "^4.1.6",
-    "@types/jest": "^24.0.18",
-    "@types/node": "^10.14.20",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
-    "tslint": "^5.20.0",
+    "@types/faker": "^5.5.9",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^4.31.0",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base-typescript": "^1.0.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jest": "^24.4.0",
+    "jest": "^27.3.0",
+    "ts-jest": "^27.0.7",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.6.3"
+    "typescript": "^4.9.3"
   }
 }

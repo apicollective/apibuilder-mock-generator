@@ -1,6 +1,8 @@
 import { ApiBuilderPrimitiveType, FullyQualifiedName } from 'apibuilder-js';
 import { mockPrimitive } from '../../../src/generators';
-import { isJson, isUuid, isDateIso8601, isDateTimeIso8601 } from '../../helpers/predicates';
+import {
+  isJson, isUuid, isDateIso8601, isDateTimeIso8601,
+} from '../../helpers/predicates';
 
 describe('mockPrimitive', () => {
   test('can mock a primitive string', () => {
