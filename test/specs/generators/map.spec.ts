@@ -44,9 +44,7 @@ describe('map generator', () => {
       Object.keys(mock).forEach((key) => {
         const value = (mock as any)[key];
         expect(key).toEqual(expect.any(String));
-        expect(enumeration.values.some((enumValue) => {
-          return enumValue.name === value;
-        })).toBe(true);
+        expect(enumeration.values.some((enumValue) => enumValue.name === value)).toBe(true);
       });
     });
   });
